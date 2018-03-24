@@ -1,0 +1,1 @@
+window.JDCnJS = JDCnJS = require('./index.js');
