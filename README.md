@@ -5,7 +5,7 @@
 [![NPM Version](https://img.shields.io/npm/v/asch-js.svg?style=flat)](https://www.npmjs.org/package/asch-js)
 - - -
 
-# Asch Javascript Library
+# Serc Javascript Library
 
 ## Install
 
@@ -18,7 +18,7 @@ npm install asch-js
 CommonJS
 
 ```
-var AschJS = require('asch-js');
+var SercJS = require('asch-js');
 ```
 
 Front end
@@ -28,7 +28,7 @@ Front end
 # or
 <script type="text/javascript" src="/browserify-asch-min.js"></script>
 
-console.log(window.AschJS)
+console.log(window.SercJS)
 ```
 
 
