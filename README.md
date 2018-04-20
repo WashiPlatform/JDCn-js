@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/AschPlatform/asch-js.png?branch=master)](https://travis-ci.org/AschPlatform/asch-js)
+[![Build Status](https://travis-ci.org/AschPlatform/serc-js.png?branch=master)](https://travis-ci.org/AschPlatform/serc-js)
 [![Author](https://img.shields.io/badge/author-@AschPlatform-blue.svg?style=flat)](http://github.com/AschPlatform) 
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat)](http://AschPlatform.mit-license.org)
-[![NpmDownload Status](http://img.shields.io/npm/dm/asch-js.svg)](https://www.npmjs.org/package/asch-js)
-[![NPM Version](https://img.shields.io/npm/v/asch-js.svg?style=flat)](https://www.npmjs.org/package/asch-js)
+[![NpmDownload Status](http://img.shields.io/npm/dm/serc-js.svg)](https://www.npmjs.org/package/serc-js)
+[![NPM Version](https://img.shields.io/npm/v/serc-js.svg?style=flat)](https://www.npmjs.org/package/serc-js)
 - - -
 
 # Serc Javascript Library
@@ -10,7 +10,7 @@
 ## Install
 
 ```
-npm install asch-js
+npm install serc-js
 ```
 
 ## Import
@@ -18,15 +18,15 @@ npm install asch-js
 CommonJS
 
 ```
-var SercJS = require('asch-js');
+var SercJS = require('serc-js');
 ```
 
 Front end
 
 ```
-<script type="text/javascript" src="/browserify-asch.js"></script>
+<script type="text/javascript" src="/browserify-serc.js"></script>
 # or
-<script type="text/javascript" src="/browserify-asch-min.js"></script>
+<script type="text/javascript" src="/browserify-serc-min.js"></script>
 
 console.log(window.SercJS)
 ```
@@ -35,4 +35,4 @@ console.log(window.SercJS)
 
 ## Usage
 
-Please reference the [asch http interface documents](https://github.com/AschPlatform/asch-docs/blob/master/asch_http_interface.md)
+Please reference the [serc http interface documents](https://github.com/AschPlatform/serc-docs/blob/master/asch_http_interface.md)
