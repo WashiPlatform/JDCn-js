@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/AschPlatform/serc-js.png?branch=master)](https://travis-ci.org/AschPlatform/serc-js)
-[![Author](https://img.shields.io/badge/author-@AschPlatform-blue.svg?style=flat)](http://github.com/AschPlatform) 
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat)](http://AschPlatform.mit-license.org)
+[![Build Status](https://travis-ci.org/WashiPlatform/serc-js.png?branch=master)](https://travis-ci.org/WashiPlatform/serc-js)
+[![Author](https://img.shields.io/badge/author-@WashiPlatform-blue.svg?style=flat)](http://github.com/WashiPlatform)
+[![License](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat)](http://WashiPlatform.mit-license.org)
 [![NpmDownload Status](http://img.shields.io/npm/dm/serc-js.svg)](https://www.npmjs.org/package/serc-js)
 [![NPM Version](https://img.shields.io/npm/v/serc-js.svg?style=flat)](https://www.npmjs.org/package/serc-js)
 - - -
@@ -35,4 +35,4 @@ console.log(window.SercJS)
 
 ## Usage
 
-Please reference the [serc http interface documents](https://github.com/AschPlatform/serc-docs/blob/master/asch_http_interface.md)
+Please reference the [serc http interface documents](https://github.com/WashiPlatform/serc-docs/blob/master/serc_http_interface.md)

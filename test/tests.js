@@ -1,28 +1,28 @@
 var Buffer = require("buffer/").Buffer;
 var crypto_lib = require("crypto-browserify");
 var should = require("should");
-var asch = require("../index.js");
+var serc = require("../index.js");
 
-describe("Asch JS", function () {
+describe("Serc JS", function () {
 
 	it("should be ok", function () {
-		(asch).should.be.ok;
+		(serc).should.be.ok;
 	});
 
 	it("should be object", function () {
-		(asch).should.be.type("object");
+		(serc).should.be.type("object");
 	});
 
 	it("should have properties", function () {
 		var properties = ["transaction", "signature", "vote", "delegate", "dapp", "crypto"];
 
 		properties.forEach(function (property) {
-			(asch).should.have.property(property);
+			(serc).should.have.property(property);
 		});
 	});
 
 	describe("crypto.js", function () {
-		var crypto = asch.crypto;
+		var crypto = serc.crypto;
 
 		it("should be ok", function () {
 			(crypto).should.be.ok;
@@ -310,7 +310,7 @@ describe("Asch JS", function () {
 	});
 
 	describe("dapp.js", function () {
-		var dapp = asch.dapp;
+		var dapp = serc.dapp;
 
 		it("should be object", function () {
 			(dapp).should.be.type("object");
@@ -325,11 +325,11 @@ describe("Asch JS", function () {
 			var trs = null;
 
 			var options = {
-				"name": "asch-dapp-cctime",
-				"link": "https://github.com/AschPlatform/asch-dapp-cctime/archive/master.zip",
+				"name": "serc-dapp-cctime",
+				"link": "https://github.com/WashiPlatform/serc-dapp-cctime/archive/master.zip",
 				"category": 1,
 				"description": "Decentralized news channel",
-				"tags": "asch,dapp,demo,cctime",
+				"tags": "serc,dapp,demo,cctime",
 				"icon": "http://o7dyh3w0x.bkt.clouddn.com/hello.png",
 				"type": 0,
 				"delegates": [
@@ -357,8 +357,8 @@ describe("Asch JS", function () {
 			});
 
 			describe("returned dapp", function () {
-				var keys = asch.crypto.getKeys("secret");
-				var secondKeys = asch.crypto.getKeys("secret 2");
+				var keys = serc.crypto.getKeys("secret");
+				var secondKeys = serc.crypto.getKeys("secret 2");
 
 				it("should be object", function () {
 					(trs).should.be.type("object");
@@ -463,39 +463,39 @@ describe("Asch JS", function () {
 				});
 
 				it("should be signed correctly", function () {
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.ok;
 				});
 
 				it("should not be signed correctly now", function () {
 					trs.amount = 10000;
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.not.ok;
 				});
 
 				it("should be second signed correctly", function () {
 					trs.amount = 0;
-					var result = asch.crypto.verifySecondSignature(trs, secondKeys.publicKey);
+					var result = serc.crypto.verifySecondSignature(trs, secondKeys.publicKey);
 					(result).should.be.ok;
 				});
 
 				it("should not be second signed correctly now", function () {
 					trs.amount = 10000;
-					var result = asch.crypto.verifySecondSignature(trs, secondKeys.publicKey);
+					var result = serc.crypto.verifySecondSignature(trs, secondKeys.publicKey);
 					(result).should.be.not.ok;
 				});
 
 				it("should be ok to verify bytes", function () {
 					var data1 = 'a1b2c3d4'
 					var secret = 'secret1'
-					var keys = asch.crypto.getKeys(secret)
-					var signature = asch.crypto.signBytes(data1, keys)
-					var result = asch.crypto.verifyBytes(data1, signature, keys.publicKey)
+					var keys = serc.crypto.getKeys(secret)
+					var signature = serc.crypto.signBytes(data1, keys)
+					var result = serc.crypto.verifyBytes(data1, signature, keys.publicKey)
 					result.should.be.ok
 
 					var data2 = new Buffer('a1b2c3d4', 'hex')
-					signature = asch.crypto.signBytes(data2, keys)
-					result = asch.crypto.verifyBytes(data2, signature, keys.publicKey)
+					signature = serc.crypto.signBytes(data2, keys)
+					result = serc.crypto.verifyBytes(data2, signature, keys.publicKey)
 					result.should.be.ok
 				})
 			});
@@ -503,7 +503,7 @@ describe("Asch JS", function () {
 	});
 
 	describe("delegate.js", function () {
-		var delegate = asch.delegate;
+		var delegate = serc.delegate;
 
 		it("should be ok", function () {
 			(delegate).should.be.ok;
@@ -534,8 +534,8 @@ describe("Asch JS", function () {
 			});
 
 			describe("returned delegate", function () {
-				var keys = asch.crypto.getKeys("secret");
-				var secondKeys = asch.crypto.getKeys("secret 2");
+				var keys = serc.crypto.getKeys("secret");
+				var secondKeys = serc.crypto.getKeys("secret 2");
 
 				it("should be ok", function () {
 					(trs).should.be.ok;
@@ -603,24 +603,24 @@ describe("Asch JS", function () {
 				})
 
 				it("should be signed correctly", function () {
-					var result = asch.crypto.verify(trs, keys.publicKey);
+					var result = serc.crypto.verify(trs, keys.publicKey);
 					(result).should.be.ok;
 				});
 
 				it("should be second signed correctly", function () {
-					var result = asch.crypto.verifySecondSignature(trs, secondKeys.publicKey);
+					var result = serc.crypto.verifySecondSignature(trs, secondKeys.publicKey);
 					(result).should.be.ok;
 				});
 
 				it("should not be signed correctly now", function () {
 					trs.amount = 100;
-					var result = asch.crypto.verify(trs, keys.publicKey);
+					var result = serc.crypto.verify(trs, keys.publicKey);
 					(result).should.be.not.ok;
 				});
 
 				it("should not be second signed correctly now", function () {
 					trs.amount = 100;
-					var result = asch.crypto.verify(trs, secondKeys.publicKey);
+					var result = serc.crypto.verify(trs, secondKeys.publicKey);
 					(result).should.be.not.ok;
 				});
 
@@ -645,7 +645,7 @@ describe("Asch JS", function () {
 	});
 
 	describe("signature.js", function () {
-		var signature = asch.signature;
+		var signature = serc.signature;
 		it("should be ok", function () {
 			(signature).should.be.ok;
 		});
@@ -880,7 +880,7 @@ describe("Asch JS", function () {
 	});
 
 	describe("transaction.js", function () {
-		var transaction = asch.transaction;
+		var transaction = serc.transaction;
 
 		it("should be object", function () {
 			(transaction).should.be.type("object");
@@ -961,13 +961,13 @@ describe("Asch JS", function () {
 				});
 
 				it("should be signed correctly", function () {
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.ok;
 				});
 
 				it("should not be signed correctly now", function () {
 					trs.amount = 10000;
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.not.ok;
 				});
 			});
@@ -977,7 +977,7 @@ describe("Asch JS", function () {
 			var createTransaction = transaction.createTransaction;
 			var trs = null;
 			var secondSecret = "second secret";
-			var keys = asch.crypto.getKeys(secondSecret);
+			var keys = serc.crypto.getKeys(secondSecret);
 
 			it("should be a function", function () {
 				(createTransaction).should.be.type("function");
@@ -1058,24 +1058,24 @@ describe("Asch JS", function () {
 				});
 
 				it("should be signed correctly", function () {
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.ok;
 				});
 
 				it("should be second signed correctly", function () {
-					var result = asch.crypto.verifySecondSignature(trs, keys.publicKey);
+					var result = serc.crypto.verifySecondSignature(trs, keys.publicKey);
 					(result).should.be.ok;
 				});
 
 				it("should not be signed correctly now", function () {
 					trs.amount = 10000;
-					var result = asch.crypto.verify(trs);
+					var result = serc.crypto.verify(trs);
 					(result).should.be.not.ok;
 				});
 
 				it("should not be second signed correctly now", function () {
 					trs.amount = 10000;
-					var result = asch.crypto.verifySecondSignature(trs, keys.publicKey);
+					var result = serc.crypto.verifySecondSignature(trs, keys.publicKey);
 					(result).should.be.not.ok;
 				});
 			});
@@ -1086,7 +1086,7 @@ describe("Asch JS", function () {
 	});
 
 	describe("vote.js", function () {
-		var vote = asch.vote;
+		var vote = serc.vote;
 
 		it("should be ok", function () {
 			(vote).should.be.ok;
@@ -1103,7 +1103,7 @@ describe("Asch JS", function () {
 		describe("#createVote", function () {
 			var createVote = vote.createVote,
 				vt = null,
-				publicKey = asch.crypto.getKeys("secret").publicKey,
+				publicKey = serc.crypto.getKeys("secret").publicKey,
 				publicKeys = ["+" + publicKey];
 
 			it("should be ok", function () {
@@ -1180,24 +1180,24 @@ describe("Asch JS", function () {
 				});
 
 				it("should be signed correctly", function () {
-					var result = asch.crypto.verify(vt);
+					var result = serc.crypto.verify(vt);
 					(result).should.be.ok;
 				});
 
 				it("should be second signed correctly", function () {
-					var result = asch.crypto.verifySecondSignature(vt, asch.crypto.getKeys("second secret").publicKey);
+					var result = serc.crypto.verifySecondSignature(vt, serc.crypto.getKeys("second secret").publicKey);
 					(result).should.be.ok;
 				});
 
 				it("should not be signed correctly now", function () {
 					vt.amount = 100;
-					var result = asch.crypto.verify(vt);
+					var result = serc.crypto.verify(vt);
 					(result).should.be.not.ok;
 				});
 
 				it("should not be second signed correctly now", function () {
 					vt.amount = 100;
-					var result = asch.crypto.verifySecondSignature(vt, asch.crypto.getKeys("second secret").publicKey);
+					var result = serc.crypto.verifySecondSignature(vt, serc.crypto.getKeys("second secret").publicKey);
 					(result).should.be.not.ok;
 				});
 
@@ -1247,9 +1247,9 @@ describe("Asch JS", function () {
 
 	describe('crypto sha256 and address', function () {
 		it('should be equal to the expected address', function () {
-			asch.crypto.getAddress('7a91b9bfc0ea185bf3ade9d264da273f7fe19bf71008210b1d7239c82dd3ad20').should.be.equal('AFbYJhiJb3DXzHy5ZP24mKw21M2dCBJCXP')
+			serc.crypto.getAddress('7a91b9bfc0ea185bf3ade9d264da273f7fe19bf71008210b1d7239c82dd3ad20').should.be.equal('AFbYJhiJb3DXzHy5ZP24mKw21M2dCBJCXP')
 			var publicKeyBuffer = new Buffer('7a91b9bfc0ea185bf3ade9d264da273f7fe19bf71008210b1d7239c82dd3ad20', 'hex')
-			asch.crypto.getAddress(publicKeyBuffer).should.be.equal('AFbYJhiJb3DXzHy5ZP24mKw21M2dCBJCXP')
+			serc.crypto.getAddress(publicKeyBuffer).should.be.equal('AFbYJhiJb3DXzHy5ZP24mKw21M2dCBJCXP')
 		})
 	})
 
