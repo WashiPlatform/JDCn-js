@@ -1,1 +1,1 @@
-window.JDCnJS = JDCnJS = require('./index.js');
+window.SercJS = SercJS = require('./index.js');

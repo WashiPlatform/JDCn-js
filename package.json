@@ -1,17 +1,17 @@
 {
-  "name": "jdcn-js",
+  "name": "serc-js",
   "version": "1.0.1",
-  "description": "JDCn javascript library",
+  "description": "Serc javascript library",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "mocha test",
-    "build": "browserify build.js -o browserify-jdcn.js && uglifyjs browserify-jdcn.js > browserify-jdcn-min.js"
+    "build": "browserify build.js -o browserify-serc.js && uglifyjs browserify-serc.js > browserify-serc-min.js"
   },
   "keywords": [
-    "jdcn",
+    "serc",
     "js",
     "library"
   ],
