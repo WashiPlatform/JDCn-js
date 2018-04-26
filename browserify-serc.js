@@ -228,7 +228,7 @@ module.exports = {
     multisignature: 500000000,
     dapp: 10000000000,
     lock: 100000000,
-    percent: 0.01
+    percent: 0.001
   },
   coin: 100000000
 }
