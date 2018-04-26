@@ -64,7 +64,7 @@ module.exports = {
   },
 }
 }).call(this,require("buffer").Buffer)
-},{"./base58check":6,"buffer":23,"fast-sha256":27,"ripemd160":49}],4:[function(require,module,exports){
+},{"./base58check":6,"buffer":23,"fast-sha256":28,"ripemd160":49}],4:[function(require,module,exports){
 (function (Buffer){
 // base-x encoding
 // Forked from https://github.com/cryptocoinjs/bs58
@@ -218,15 +218,17 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./bs58.js":5,"buffer":23,"fast-sha256":27}],7:[function(require,module,exports){
+},{"./bs58.js":5,"buffer":23,"fast-sha256":28}],7:[function(require,module,exports){
 module.exports = {
   fees:{
-    send: 10000000,
-    vote: 10000000,
-    delegate: 10000000000,
+    send: 100000000,  // 转账矿工费用基数
+    vote: 100000000,  // 投票费用
+    delegate: 10000000000,  
     secondsignature: 500000000,
     multisignature: 500000000,
-    dapp: 10000000000
+    dapp: 10000000000,
+    lock: 100000000,
+    percent: 0.01
   },
   coin: 100000000
 }
@@ -835,7 +837,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../address.js":3,"browserify-bignum":22,"buffer":23,"buffer/":23,"bytebuffer":24,"fast-sha256":27,"tweetnacl":53}],12:[function(require,module,exports){
+},{"../address.js":3,"browserify-bignum":22,"buffer":23,"buffer/":23,"bytebuffer":24,"fast-sha256":28,"tweetnacl":53}],12:[function(require,module,exports){
 (function (Buffer){
 var ByteBuffer = require('bytebuffer')
 var crypto = require("./crypto.js")
@@ -1063,7 +1065,7 @@ var options = require('../options')
 
 function calculateFee(amount) {
     var min = constants.fees.send;
-    var fee = parseFloat((amount * 0.0001).toFixed(0));
+    var fee = parseFloat((amount * constants.fees.percent).toFixed(0));
     return fee < min ? min : fee;
 }
 
@@ -1096,7 +1098,7 @@ function createLock(height, secret, secondSecret) {
 	var transaction = {
 		type: 100,
 		amount: 0,
-		fee: 10000000,
+		fee: constants.fees.lock,
 		recipientId: null,
 		args: [ String(height) ],
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
@@ -5427,7 +5429,7 @@ function isnan (val) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":20,"ieee754":29,"isarray":32}],24:[function(require,module,exports){
+},{"base64-js":20,"ieee754":30,"isarray":33}],24:[function(require,module,exports){
 /*
  Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
 
@@ -9175,1036 +9177,7 @@ function isnan (val) {
     return ByteBuffer;
 });
 
-},{"long":33}],25:[function(require,module,exports){
-(function (Buffer){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-
-function isArray(arg) {
-  if (Array.isArray) {
-    return Array.isArray(arg);
-  }
-  return objectToString(arg) === '[object Array]';
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = Buffer.isBuffer;
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":31}],26:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],27:[function(require,module,exports){
-(function (root, factory) {
-    // Hack to make all exports of this module sha256 function object properties.
-    var exports = {};
-    factory(exports);
-    var sha256 = exports["default"];
-    for (var k in exports) {
-        sha256[k] = exports[k];
-    }
-        
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = sha256;
-    } else if (typeof define === 'function' && define.amd) {
-        define(function() { return sha256; }); 
-    } else {
-        root.sha256 = sha256;
-    }
-})(this, function(exports) {
-"use strict";
-exports.__esModule = true;
-// SHA-256 (+ HMAC and PBKDF2) for JavaScript.
-//
-// Written in 2014-2016 by Dmitry Chestnykh.
-// Public domain, no warranty.
-//
-// Functions (accept and return Uint8Arrays):
-//
-//   sha256(message) -> hash
-//   sha256.hmac(key, message) -> mac
-//   sha256.pbkdf2(password, salt, rounds, dkLen) -> dk
-//
-//  Classes:
-//
-//   new sha256.Hash()
-//   new sha256.HMAC(key)
-//
-exports.digestLength = 32;
-exports.blockSize = 64;
-// SHA-256 constants
-var K = new Uint32Array([
-    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
-    0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
-    0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7,
-    0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
-    0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152,
-    0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
-    0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
-    0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819,
-    0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
-    0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f,
-    0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-    0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
-]);
-function hashBlocks(w, v, p, pos, len) {
-    var a, b, c, d, e, f, g, h, u, i, j, t1, t2;
-    while (len >= 64) {
-        a = v[0];
-        b = v[1];
-        c = v[2];
-        d = v[3];
-        e = v[4];
-        f = v[5];
-        g = v[6];
-        h = v[7];
-        for (i = 0; i < 16; i++) {
-            j = pos + i * 4;
-            w[i] = (((p[j] & 0xff) << 24) | ((p[j + 1] & 0xff) << 16) |
-                ((p[j + 2] & 0xff) << 8) | (p[j + 3] & 0xff));
-        }
-        for (i = 16; i < 64; i++) {
-            u = w[i - 2];
-            t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
-            u = w[i - 15];
-            t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
-            w[i] = (t1 + w[i - 7] | 0) + (t2 + w[i - 16] | 0);
-        }
-        for (i = 0; i < 64; i++) {
-            t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
-                (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
-                ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
-            t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
-                (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
-            h = g;
-            g = f;
-            f = e;
-            e = (d + t1) | 0;
-            d = c;
-            c = b;
-            b = a;
-            a = (t1 + t2) | 0;
-        }
-        v[0] += a;
-        v[1] += b;
-        v[2] += c;
-        v[3] += d;
-        v[4] += e;
-        v[5] += f;
-        v[6] += g;
-        v[7] += h;
-        pos += 64;
-        len -= 64;
-    }
-    return pos;
-}
-// Hash implements SHA256 hash algorithm.
-var Hash = /** @class */ (function () {
-    function Hash() {
-        this.digestLength = exports.digestLength;
-        this.blockSize = exports.blockSize;
-        // Note: Int32Array is used instead of Uint32Array for performance reasons.
-        this.state = new Int32Array(8); // hash state
-        this.temp = new Int32Array(64); // temporary state
-        this.buffer = new Uint8Array(128); // buffer for data to hash
-        this.bufferLength = 0; // number of bytes in buffer
-        this.bytesHashed = 0; // number of total bytes hashed
-        this.finished = false; // indicates whether the hash was finalized
-        this.reset();
-    }
-    // Resets hash state making it possible
-    // to re-use this instance to hash other data.
-    Hash.prototype.reset = function () {
-        this.state[0] = 0x6a09e667;
-        this.state[1] = 0xbb67ae85;
-        this.state[2] = 0x3c6ef372;
-        this.state[3] = 0xa54ff53a;
-        this.state[4] = 0x510e527f;
-        this.state[5] = 0x9b05688c;
-        this.state[6] = 0x1f83d9ab;
-        this.state[7] = 0x5be0cd19;
-        this.bufferLength = 0;
-        this.bytesHashed = 0;
-        this.finished = false;
-        return this;
-    };
-    // Cleans internal buffers and re-initializes hash state.
-    Hash.prototype.clean = function () {
-        for (var i = 0; i < this.buffer.length; i++) {
-            this.buffer[i] = 0;
-        }
-        for (var i = 0; i < this.temp.length; i++) {
-            this.temp[i] = 0;
-        }
-        this.reset();
-    };
-    // Updates hash state with the given data.
-    //
-    // Optionally, length of the data can be specified to hash
-    // fewer bytes than data.length.
-    //
-    // Throws error when trying to update already finalized hash:
-    // instance must be reset to use it again.
-    Hash.prototype.update = function (data, dataLength) {
-        if (dataLength === void 0) { dataLength = data.length; }
-        if (this.finished) {
-            throw new Error("SHA256: can't update because hash was finished.");
-        }
-        var dataPos = 0;
-        this.bytesHashed += dataLength;
-        if (this.bufferLength > 0) {
-            while (this.bufferLength < 64 && dataLength > 0) {
-                this.buffer[this.bufferLength++] = data[dataPos++];
-                dataLength--;
-            }
-            if (this.bufferLength === 64) {
-                hashBlocks(this.temp, this.state, this.buffer, 0, 64);
-                this.bufferLength = 0;
-            }
-        }
-        if (dataLength >= 64) {
-            dataPos = hashBlocks(this.temp, this.state, data, dataPos, dataLength);
-            dataLength %= 64;
-        }
-        while (dataLength > 0) {
-            this.buffer[this.bufferLength++] = data[dataPos++];
-            dataLength--;
-        }
-        return this;
-    };
-    // Finalizes hash state and puts hash into out.
-    //
-    // If hash was already finalized, puts the same value.
-    Hash.prototype.finish = function (out) {
-        if (!this.finished) {
-            var bytesHashed = this.bytesHashed;
-            var left = this.bufferLength;
-            var bitLenHi = (bytesHashed / 0x20000000) | 0;
-            var bitLenLo = bytesHashed << 3;
-            var padLength = (bytesHashed % 64 < 56) ? 64 : 128;
-            this.buffer[left] = 0x80;
-            for (var i = left + 1; i < padLength - 8; i++) {
-                this.buffer[i] = 0;
-            }
-            this.buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
-            this.buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
-            this.buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
-            this.buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
-            this.buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
-            this.buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
-            this.buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
-            this.buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
-            hashBlocks(this.temp, this.state, this.buffer, 0, padLength);
-            this.finished = true;
-        }
-        for (var i = 0; i < 8; i++) {
-            out[i * 4 + 0] = (this.state[i] >>> 24) & 0xff;
-            out[i * 4 + 1] = (this.state[i] >>> 16) & 0xff;
-            out[i * 4 + 2] = (this.state[i] >>> 8) & 0xff;
-            out[i * 4 + 3] = (this.state[i] >>> 0) & 0xff;
-        }
-        return this;
-    };
-    // Returns the final hash digest.
-    Hash.prototype.digest = function () {
-        var out = new Uint8Array(this.digestLength);
-        this.finish(out);
-        return out;
-    };
-    // Internal function for use in HMAC for optimization.
-    Hash.prototype._saveState = function (out) {
-        for (var i = 0; i < this.state.length; i++) {
-            out[i] = this.state[i];
-        }
-    };
-    // Internal function for use in HMAC for optimization.
-    Hash.prototype._restoreState = function (from, bytesHashed) {
-        for (var i = 0; i < this.state.length; i++) {
-            this.state[i] = from[i];
-        }
-        this.bytesHashed = bytesHashed;
-        this.finished = false;
-        this.bufferLength = 0;
-    };
-    return Hash;
-}());
-exports.Hash = Hash;
-// HMAC implements HMAC-SHA256 message authentication algorithm.
-var HMAC = /** @class */ (function () {
-    function HMAC(key) {
-        this.inner = new Hash();
-        this.outer = new Hash();
-        this.blockSize = this.inner.blockSize;
-        this.digestLength = this.inner.digestLength;
-        var pad = new Uint8Array(this.blockSize);
-        if (key.length > this.blockSize) {
-            (new Hash()).update(key).finish(pad).clean();
-        }
-        else {
-            for (var i = 0; i < key.length; i++) {
-                pad[i] = key[i];
-            }
-        }
-        for (var i = 0; i < pad.length; i++) {
-            pad[i] ^= 0x36;
-        }
-        this.inner.update(pad);
-        for (var i = 0; i < pad.length; i++) {
-            pad[i] ^= 0x36 ^ 0x5c;
-        }
-        this.outer.update(pad);
-        this.istate = new Uint32Array(8);
-        this.ostate = new Uint32Array(8);
-        this.inner._saveState(this.istate);
-        this.outer._saveState(this.ostate);
-        for (var i = 0; i < pad.length; i++) {
-            pad[i] = 0;
-        }
-    }
-    // Returns HMAC state to the state initialized with key
-    // to make it possible to run HMAC over the other data with the same
-    // key without creating a new instance.
-    HMAC.prototype.reset = function () {
-        this.inner._restoreState(this.istate, this.inner.blockSize);
-        this.outer._restoreState(this.ostate, this.outer.blockSize);
-        return this;
-    };
-    // Cleans HMAC state.
-    HMAC.prototype.clean = function () {
-        for (var i = 0; i < this.istate.length; i++) {
-            this.ostate[i] = this.istate[i] = 0;
-        }
-        this.inner.clean();
-        this.outer.clean();
-    };
-    // Updates state with provided data.
-    HMAC.prototype.update = function (data) {
-        this.inner.update(data);
-        return this;
-    };
-    // Finalizes HMAC and puts the result in out.
-    HMAC.prototype.finish = function (out) {
-        if (this.outer.finished) {
-            this.outer.finish(out);
-        }
-        else {
-            this.inner.finish(out);
-            this.outer.update(out, this.digestLength).finish(out);
-        }
-        return this;
-    };
-    // Returns message authentication code.
-    HMAC.prototype.digest = function () {
-        var out = new Uint8Array(this.digestLength);
-        this.finish(out);
-        return out;
-    };
-    return HMAC;
-}());
-exports.HMAC = HMAC;
-// Returns SHA256 hash of data.
-function hash(data) {
-    var h = (new Hash()).update(data);
-    var digest = h.digest();
-    h.clean();
-    return digest;
-}
-exports.hash = hash;
-// Function hash is both available as module.hash and as default export.
-exports["default"] = hash;
-// Returns HMAC-SHA256 of data under the key.
-function hmac(key, data) {
-    var h = (new HMAC(key)).update(data);
-    var digest = h.digest();
-    h.clean();
-    return digest;
-}
-exports.hmac = hmac;
-// Derives a key from password and salt using PBKDF2-HMAC-SHA256
-// with the given number of iterations.
-//
-// The number of bytes returned is equal to dkLen.
-//
-// (For better security, avoid dkLen greater than hash length - 32 bytes).
-function pbkdf2(password, salt, iterations, dkLen) {
-    var prf = new HMAC(password);
-    var len = prf.digestLength;
-    var ctr = new Uint8Array(4);
-    var t = new Uint8Array(len);
-    var u = new Uint8Array(len);
-    var dk = new Uint8Array(dkLen);
-    for (var i = 0; i * len < dkLen; i++) {
-        var c = i + 1;
-        ctr[0] = (c >>> 24) & 0xff;
-        ctr[1] = (c >>> 16) & 0xff;
-        ctr[2] = (c >>> 8) & 0xff;
-        ctr[3] = (c >>> 0) & 0xff;
-        prf.reset();
-        prf.update(salt);
-        prf.update(ctr);
-        prf.finish(u);
-        for (var j = 0; j < len; j++) {
-            t[j] = u[j];
-        }
-        for (var j = 2; j <= iterations; j++) {
-            prf.reset();
-            prf.update(u).finish(u);
-            for (var k = 0; k < len; k++) {
-                t[k] ^= u[k];
-            }
-        }
-        for (var j = 0; j < len && i * len + j < dkLen; j++) {
-            dk[i * len + j] = t[j];
-        }
-    }
-    for (var i = 0; i < len; i++) {
-        t[i] = u[i] = 0;
-    }
-    for (var i = 0; i < 4; i++) {
-        ctr[i] = 0;
-    }
-    prf.clean();
-    return dk;
-}
-exports.pbkdf2 = pbkdf2;
-});
-
-},{}],28:[function(require,module,exports){
-'use strict'
-var Buffer = require('safe-buffer').Buffer
-var Transform = require('stream').Transform
-var inherits = require('inherits')
-
-function throwIfNotStringOrBuffer (val, prefix) {
-  if (!Buffer.isBuffer(val) && typeof val !== 'string') {
-    throw new TypeError(prefix + ' must be a string or a buffer')
-  }
-}
-
-function HashBase (blockSize) {
-  Transform.call(this)
-
-  this._block = Buffer.allocUnsafe(blockSize)
-  this._blockSize = blockSize
-  this._blockOffset = 0
-  this._length = [0, 0, 0, 0]
-
-  this._finalized = false
-}
-
-inherits(HashBase, Transform)
-
-HashBase.prototype._transform = function (chunk, encoding, callback) {
-  var error = null
-  try {
-    this.update(chunk, encoding)
-  } catch (err) {
-    error = err
-  }
-
-  callback(error)
-}
-
-HashBase.prototype._flush = function (callback) {
-  var error = null
-  try {
-    this.push(this.digest())
-  } catch (err) {
-    error = err
-  }
-
-  callback(error)
-}
-
-HashBase.prototype.update = function (data, encoding) {
-  throwIfNotStringOrBuffer(data, 'Data')
-  if (this._finalized) throw new Error('Digest already called')
-  if (!Buffer.isBuffer(data)) data = Buffer.from(data, encoding)
-
-  // consume data
-  var block = this._block
-  var offset = 0
-  while (this._blockOffset + data.length - offset >= this._blockSize) {
-    for (var i = this._blockOffset; i < this._blockSize;) block[i++] = data[offset++]
-    this._update()
-    this._blockOffset = 0
-  }
-  while (offset < data.length) block[this._blockOffset++] = data[offset++]
-
-  // update length
-  for (var j = 0, carry = data.length * 8; carry > 0; ++j) {
-    this._length[j] += carry
-    carry = (this._length[j] / 0x0100000000) | 0
-    if (carry > 0) this._length[j] -= 0x0100000000 * carry
-  }
-
-  return this
-}
-
-HashBase.prototype._update = function () {
-  throw new Error('_update is not implemented')
-}
-
-HashBase.prototype.digest = function (encoding) {
-  if (this._finalized) throw new Error('Digest already called')
-  this._finalized = true
-
-  var digest = this._digest()
-  if (encoding !== undefined) digest = digest.toString(encoding)
-
-  // reset state
-  this._block.fill(0)
-  this._blockOffset = 0
-  for (var i = 0; i < 4; ++i) this._length[i] = 0
-
-  return digest
-}
-
-HashBase.prototype._digest = function () {
-  throw new Error('_digest is not implemented')
-}
-
-module.exports = HashBase
-
-},{"inherits":30,"safe-buffer":50,"stream":51}],29:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],30:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],31:[function(require,module,exports){
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-module.exports = function (obj) {
-  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
-}
-
-function isBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
-}
-
-},{}],32:[function(require,module,exports){
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-},{}],33:[function(require,module,exports){
+},{"long":25}],25:[function(require,module,exports){
 /*
  Copyright 2013 Daniel Wirtz <dcode@dcode.io>
  Copyright 2009 The Closure Library Authors. All Rights Reserved.
@@ -11415,6 +10388,1035 @@ module.exports = Array.isArray || function (arr) {
     return Long;
 });
 
+},{}],26:[function(require,module,exports){
+(function (Buffer){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+
+function isArray(arg) {
+  if (Array.isArray) {
+    return Array.isArray(arg);
+  }
+  return objectToString(arg) === '[object Array]';
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = Buffer.isBuffer;
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
+},{"../../is-buffer/index.js":32}],27:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],28:[function(require,module,exports){
+(function (root, factory) {
+    // Hack to make all exports of this module sha256 function object properties.
+    var exports = {};
+    factory(exports);
+    var sha256 = exports["default"];
+    for (var k in exports) {
+        sha256[k] = exports[k];
+    }
+        
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = sha256;
+    } else if (typeof define === 'function' && define.amd) {
+        define(function() { return sha256; }); 
+    } else {
+        root.sha256 = sha256;
+    }
+})(this, function(exports) {
+"use strict";
+exports.__esModule = true;
+// SHA-256 (+ HMAC and PBKDF2) for JavaScript.
+//
+// Written in 2014-2016 by Dmitry Chestnykh.
+// Public domain, no warranty.
+//
+// Functions (accept and return Uint8Arrays):
+//
+//   sha256(message) -> hash
+//   sha256.hmac(key, message) -> mac
+//   sha256.pbkdf2(password, salt, rounds, dkLen) -> dk
+//
+//  Classes:
+//
+//   new sha256.Hash()
+//   new sha256.HMAC(key)
+//
+exports.digestLength = 32;
+exports.blockSize = 64;
+// SHA-256 constants
+var K = new Uint32Array([
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
+    0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
+    0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7,
+    0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
+    0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152,
+    0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+    0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+    0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819,
+    0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
+    0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f,
+    0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+    0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+]);
+function hashBlocks(w, v, p, pos, len) {
+    var a, b, c, d, e, f, g, h, u, i, j, t1, t2;
+    while (len >= 64) {
+        a = v[0];
+        b = v[1];
+        c = v[2];
+        d = v[3];
+        e = v[4];
+        f = v[5];
+        g = v[6];
+        h = v[7];
+        for (i = 0; i < 16; i++) {
+            j = pos + i * 4;
+            w[i] = (((p[j] & 0xff) << 24) | ((p[j + 1] & 0xff) << 16) |
+                ((p[j + 2] & 0xff) << 8) | (p[j + 3] & 0xff));
+        }
+        for (i = 16; i < 64; i++) {
+            u = w[i - 2];
+            t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
+            u = w[i - 15];
+            t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
+            w[i] = (t1 + w[i - 7] | 0) + (t2 + w[i - 16] | 0);
+        }
+        for (i = 0; i < 64; i++) {
+            t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
+                (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
+                ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
+            t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
+                (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+            h = g;
+            g = f;
+            f = e;
+            e = (d + t1) | 0;
+            d = c;
+            c = b;
+            b = a;
+            a = (t1 + t2) | 0;
+        }
+        v[0] += a;
+        v[1] += b;
+        v[2] += c;
+        v[3] += d;
+        v[4] += e;
+        v[5] += f;
+        v[6] += g;
+        v[7] += h;
+        pos += 64;
+        len -= 64;
+    }
+    return pos;
+}
+// Hash implements SHA256 hash algorithm.
+var Hash = /** @class */ (function () {
+    function Hash() {
+        this.digestLength = exports.digestLength;
+        this.blockSize = exports.blockSize;
+        // Note: Int32Array is used instead of Uint32Array for performance reasons.
+        this.state = new Int32Array(8); // hash state
+        this.temp = new Int32Array(64); // temporary state
+        this.buffer = new Uint8Array(128); // buffer for data to hash
+        this.bufferLength = 0; // number of bytes in buffer
+        this.bytesHashed = 0; // number of total bytes hashed
+        this.finished = false; // indicates whether the hash was finalized
+        this.reset();
+    }
+    // Resets hash state making it possible
+    // to re-use this instance to hash other data.
+    Hash.prototype.reset = function () {
+        this.state[0] = 0x6a09e667;
+        this.state[1] = 0xbb67ae85;
+        this.state[2] = 0x3c6ef372;
+        this.state[3] = 0xa54ff53a;
+        this.state[4] = 0x510e527f;
+        this.state[5] = 0x9b05688c;
+        this.state[6] = 0x1f83d9ab;
+        this.state[7] = 0x5be0cd19;
+        this.bufferLength = 0;
+        this.bytesHashed = 0;
+        this.finished = false;
+        return this;
+    };
+    // Cleans internal buffers and re-initializes hash state.
+    Hash.prototype.clean = function () {
+        for (var i = 0; i < this.buffer.length; i++) {
+            this.buffer[i] = 0;
+        }
+        for (var i = 0; i < this.temp.length; i++) {
+            this.temp[i] = 0;
+        }
+        this.reset();
+    };
+    // Updates hash state with the given data.
+    //
+    // Optionally, length of the data can be specified to hash
+    // fewer bytes than data.length.
+    //
+    // Throws error when trying to update already finalized hash:
+    // instance must be reset to use it again.
+    Hash.prototype.update = function (data, dataLength) {
+        if (dataLength === void 0) { dataLength = data.length; }
+        if (this.finished) {
+            throw new Error("SHA256: can't update because hash was finished.");
+        }
+        var dataPos = 0;
+        this.bytesHashed += dataLength;
+        if (this.bufferLength > 0) {
+            while (this.bufferLength < 64 && dataLength > 0) {
+                this.buffer[this.bufferLength++] = data[dataPos++];
+                dataLength--;
+            }
+            if (this.bufferLength === 64) {
+                hashBlocks(this.temp, this.state, this.buffer, 0, 64);
+                this.bufferLength = 0;
+            }
+        }
+        if (dataLength >= 64) {
+            dataPos = hashBlocks(this.temp, this.state, data, dataPos, dataLength);
+            dataLength %= 64;
+        }
+        while (dataLength > 0) {
+            this.buffer[this.bufferLength++] = data[dataPos++];
+            dataLength--;
+        }
+        return this;
+    };
+    // Finalizes hash state and puts hash into out.
+    //
+    // If hash was already finalized, puts the same value.
+    Hash.prototype.finish = function (out) {
+        if (!this.finished) {
+            var bytesHashed = this.bytesHashed;
+            var left = this.bufferLength;
+            var bitLenHi = (bytesHashed / 0x20000000) | 0;
+            var bitLenLo = bytesHashed << 3;
+            var padLength = (bytesHashed % 64 < 56) ? 64 : 128;
+            this.buffer[left] = 0x80;
+            for (var i = left + 1; i < padLength - 8; i++) {
+                this.buffer[i] = 0;
+            }
+            this.buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
+            this.buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
+            this.buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
+            this.buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
+            this.buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
+            this.buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
+            this.buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
+            this.buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
+            hashBlocks(this.temp, this.state, this.buffer, 0, padLength);
+            this.finished = true;
+        }
+        for (var i = 0; i < 8; i++) {
+            out[i * 4 + 0] = (this.state[i] >>> 24) & 0xff;
+            out[i * 4 + 1] = (this.state[i] >>> 16) & 0xff;
+            out[i * 4 + 2] = (this.state[i] >>> 8) & 0xff;
+            out[i * 4 + 3] = (this.state[i] >>> 0) & 0xff;
+        }
+        return this;
+    };
+    // Returns the final hash digest.
+    Hash.prototype.digest = function () {
+        var out = new Uint8Array(this.digestLength);
+        this.finish(out);
+        return out;
+    };
+    // Internal function for use in HMAC for optimization.
+    Hash.prototype._saveState = function (out) {
+        for (var i = 0; i < this.state.length; i++) {
+            out[i] = this.state[i];
+        }
+    };
+    // Internal function for use in HMAC for optimization.
+    Hash.prototype._restoreState = function (from, bytesHashed) {
+        for (var i = 0; i < this.state.length; i++) {
+            this.state[i] = from[i];
+        }
+        this.bytesHashed = bytesHashed;
+        this.finished = false;
+        this.bufferLength = 0;
+    };
+    return Hash;
+}());
+exports.Hash = Hash;
+// HMAC implements HMAC-SHA256 message authentication algorithm.
+var HMAC = /** @class */ (function () {
+    function HMAC(key) {
+        this.inner = new Hash();
+        this.outer = new Hash();
+        this.blockSize = this.inner.blockSize;
+        this.digestLength = this.inner.digestLength;
+        var pad = new Uint8Array(this.blockSize);
+        if (key.length > this.blockSize) {
+            (new Hash()).update(key).finish(pad).clean();
+        }
+        else {
+            for (var i = 0; i < key.length; i++) {
+                pad[i] = key[i];
+            }
+        }
+        for (var i = 0; i < pad.length; i++) {
+            pad[i] ^= 0x36;
+        }
+        this.inner.update(pad);
+        for (var i = 0; i < pad.length; i++) {
+            pad[i] ^= 0x36 ^ 0x5c;
+        }
+        this.outer.update(pad);
+        this.istate = new Uint32Array(8);
+        this.ostate = new Uint32Array(8);
+        this.inner._saveState(this.istate);
+        this.outer._saveState(this.ostate);
+        for (var i = 0; i < pad.length; i++) {
+            pad[i] = 0;
+        }
+    }
+    // Returns HMAC state to the state initialized with key
+    // to make it possible to run HMAC over the other data with the same
+    // key without creating a new instance.
+    HMAC.prototype.reset = function () {
+        this.inner._restoreState(this.istate, this.inner.blockSize);
+        this.outer._restoreState(this.ostate, this.outer.blockSize);
+        return this;
+    };
+    // Cleans HMAC state.
+    HMAC.prototype.clean = function () {
+        for (var i = 0; i < this.istate.length; i++) {
+            this.ostate[i] = this.istate[i] = 0;
+        }
+        this.inner.clean();
+        this.outer.clean();
+    };
+    // Updates state with provided data.
+    HMAC.prototype.update = function (data) {
+        this.inner.update(data);
+        return this;
+    };
+    // Finalizes HMAC and puts the result in out.
+    HMAC.prototype.finish = function (out) {
+        if (this.outer.finished) {
+            this.outer.finish(out);
+        }
+        else {
+            this.inner.finish(out);
+            this.outer.update(out, this.digestLength).finish(out);
+        }
+        return this;
+    };
+    // Returns message authentication code.
+    HMAC.prototype.digest = function () {
+        var out = new Uint8Array(this.digestLength);
+        this.finish(out);
+        return out;
+    };
+    return HMAC;
+}());
+exports.HMAC = HMAC;
+// Returns SHA256 hash of data.
+function hash(data) {
+    var h = (new Hash()).update(data);
+    var digest = h.digest();
+    h.clean();
+    return digest;
+}
+exports.hash = hash;
+// Function hash is both available as module.hash and as default export.
+exports["default"] = hash;
+// Returns HMAC-SHA256 of data under the key.
+function hmac(key, data) {
+    var h = (new HMAC(key)).update(data);
+    var digest = h.digest();
+    h.clean();
+    return digest;
+}
+exports.hmac = hmac;
+// Derives a key from password and salt using PBKDF2-HMAC-SHA256
+// with the given number of iterations.
+//
+// The number of bytes returned is equal to dkLen.
+//
+// (For better security, avoid dkLen greater than hash length - 32 bytes).
+function pbkdf2(password, salt, iterations, dkLen) {
+    var prf = new HMAC(password);
+    var len = prf.digestLength;
+    var ctr = new Uint8Array(4);
+    var t = new Uint8Array(len);
+    var u = new Uint8Array(len);
+    var dk = new Uint8Array(dkLen);
+    for (var i = 0; i * len < dkLen; i++) {
+        var c = i + 1;
+        ctr[0] = (c >>> 24) & 0xff;
+        ctr[1] = (c >>> 16) & 0xff;
+        ctr[2] = (c >>> 8) & 0xff;
+        ctr[3] = (c >>> 0) & 0xff;
+        prf.reset();
+        prf.update(salt);
+        prf.update(ctr);
+        prf.finish(u);
+        for (var j = 0; j < len; j++) {
+            t[j] = u[j];
+        }
+        for (var j = 2; j <= iterations; j++) {
+            prf.reset();
+            prf.update(u).finish(u);
+            for (var k = 0; k < len; k++) {
+                t[k] ^= u[k];
+            }
+        }
+        for (var j = 0; j < len && i * len + j < dkLen; j++) {
+            dk[i * len + j] = t[j];
+        }
+    }
+    for (var i = 0; i < len; i++) {
+        t[i] = u[i] = 0;
+    }
+    for (var i = 0; i < 4; i++) {
+        ctr[i] = 0;
+    }
+    prf.clean();
+    return dk;
+}
+exports.pbkdf2 = pbkdf2;
+});
+
+},{}],29:[function(require,module,exports){
+'use strict'
+var Buffer = require('safe-buffer').Buffer
+var Transform = require('stream').Transform
+var inherits = require('inherits')
+
+function throwIfNotStringOrBuffer (val, prefix) {
+  if (!Buffer.isBuffer(val) && typeof val !== 'string') {
+    throw new TypeError(prefix + ' must be a string or a buffer')
+  }
+}
+
+function HashBase (blockSize) {
+  Transform.call(this)
+
+  this._block = Buffer.allocUnsafe(blockSize)
+  this._blockSize = blockSize
+  this._blockOffset = 0
+  this._length = [0, 0, 0, 0]
+
+  this._finalized = false
+}
+
+inherits(HashBase, Transform)
+
+HashBase.prototype._transform = function (chunk, encoding, callback) {
+  var error = null
+  try {
+    this.update(chunk, encoding)
+  } catch (err) {
+    error = err
+  }
+
+  callback(error)
+}
+
+HashBase.prototype._flush = function (callback) {
+  var error = null
+  try {
+    this.push(this.digest())
+  } catch (err) {
+    error = err
+  }
+
+  callback(error)
+}
+
+HashBase.prototype.update = function (data, encoding) {
+  throwIfNotStringOrBuffer(data, 'Data')
+  if (this._finalized) throw new Error('Digest already called')
+  if (!Buffer.isBuffer(data)) data = Buffer.from(data, encoding)
+
+  // consume data
+  var block = this._block
+  var offset = 0
+  while (this._blockOffset + data.length - offset >= this._blockSize) {
+    for (var i = this._blockOffset; i < this._blockSize;) block[i++] = data[offset++]
+    this._update()
+    this._blockOffset = 0
+  }
+  while (offset < data.length) block[this._blockOffset++] = data[offset++]
+
+  // update length
+  for (var j = 0, carry = data.length * 8; carry > 0; ++j) {
+    this._length[j] += carry
+    carry = (this._length[j] / 0x0100000000) | 0
+    if (carry > 0) this._length[j] -= 0x0100000000 * carry
+  }
+
+  return this
+}
+
+HashBase.prototype._update = function () {
+  throw new Error('_update is not implemented')
+}
+
+HashBase.prototype.digest = function (encoding) {
+  if (this._finalized) throw new Error('Digest already called')
+  this._finalized = true
+
+  var digest = this._digest()
+  if (encoding !== undefined) digest = digest.toString(encoding)
+
+  // reset state
+  this._block.fill(0)
+  this._blockOffset = 0
+  for (var i = 0; i < 4; ++i) this._length[i] = 0
+
+  return digest
+}
+
+HashBase.prototype._digest = function () {
+  throw new Error('_digest is not implemented')
+}
+
+module.exports = HashBase
+
+},{"inherits":31,"safe-buffer":50,"stream":51}],30:[function(require,module,exports){
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],31:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],32:[function(require,module,exports){
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
+
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
+
+},{}],33:[function(require,module,exports){
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
 },{}],34:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -11784,7 +11786,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":39,"./_stream_writable":41,"core-util-is":25,"inherits":30,"process-nextick-args":34}],38:[function(require,module,exports){
+},{"./_stream_readable":39,"./_stream_writable":41,"core-util-is":26,"inherits":31,"process-nextick-args":34}],38:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11832,7 +11834,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":40,"core-util-is":25,"inherits":30}],39:[function(require,module,exports){
+},{"./_stream_transform":40,"core-util-is":26,"inherits":31}],39:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12854,7 +12856,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":37,"./internal/streams/BufferList":42,"./internal/streams/destroy":43,"./internal/streams/stream":44,"_process":35,"core-util-is":25,"events":26,"inherits":30,"isarray":32,"process-nextick-args":34,"safe-buffer":50,"string_decoder/":52,"util":21}],40:[function(require,module,exports){
+},{"./_stream_duplex":37,"./internal/streams/BufferList":42,"./internal/streams/destroy":43,"./internal/streams/stream":44,"_process":35,"core-util-is":26,"events":27,"inherits":31,"isarray":33,"process-nextick-args":34,"safe-buffer":50,"string_decoder/":52,"util":21}],40:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13069,7 +13071,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":37,"core-util-is":25,"inherits":30}],41:[function(require,module,exports){
+},{"./_stream_duplex":37,"core-util-is":26,"inherits":31}],41:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13759,7 +13761,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":37,"./internal/streams/destroy":43,"./internal/streams/stream":44,"_process":35,"core-util-is":25,"inherits":30,"process-nextick-args":34,"safe-buffer":50,"util-deprecate":54}],42:[function(require,module,exports){
+},{"./_stream_duplex":37,"./internal/streams/destroy":43,"./internal/streams/stream":44,"_process":35,"core-util-is":26,"inherits":31,"process-nextick-args":34,"safe-buffer":50,"util-deprecate":54}],42:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -13917,7 +13919,7 @@ module.exports = {
 },{"process-nextick-args":34}],44:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":26}],45:[function(require,module,exports){
+},{"events":27}],45:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
 },{"./readable":46}],46:[function(require,module,exports){
@@ -14100,7 +14102,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":23,"hash-base":28,"inherits":30}],50:[function(require,module,exports){
+},{"buffer":23,"hash-base":29,"inherits":31}],50:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -14293,7 +14295,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":26,"inherits":30,"readable-stream/duplex.js":36,"readable-stream/passthrough.js":45,"readable-stream/readable.js":46,"readable-stream/transform.js":47,"readable-stream/writable.js":48}],52:[function(require,module,exports){
+},{"events":27,"inherits":31,"readable-stream/duplex.js":36,"readable-stream/passthrough.js":45,"readable-stream/readable.js":46,"readable-stream/transform.js":47,"readable-stream/writable.js":48}],52:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
