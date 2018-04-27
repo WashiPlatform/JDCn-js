@@ -2,22 +2,23 @@
 window.SercJS = SercJS = require('./index.js');
 },{"./index.js":2}],2:[function(require,module,exports){
 module.exports = {
-	crypto : require("./lib/transactions/crypto.js"),
+	crypto: require("./lib/transactions/crypto.js"),
 	dapp: require("./lib/transactions/dapp.js"),
 	transfer: require("./lib/transactions/transfer.js"),
-	delegate : require("./lib/transactions/delegate.js"),
-	signature : require("./lib/transactions/signature.js"),
-	transaction : require("./lib/transactions/transaction.js"),
-	vote : require("./lib/transactions/vote.js"),
+	delegate: require("./lib/transactions/delegate.js"),
+	signature: require("./lib/transactions/signature.js"),
+	transaction: require("./lib/transactions/transaction.js"),
+	vote: require("./lib/transactions/vote.js"),
 	uia: require("./lib/transactions/uia.js"),
 	storage: require("./lib/transactions/storage.js"),
 	options: require("./lib/options.js"),
+	constants: require("./lib/constants"),
 	utils: {
 		slots: require("./lib/time/slots.js"),
 		format: require("./lib/time/format.js")
 	}
 }
-},{"./lib/options.js":8,"./lib/time/format.js":9,"./lib/time/slots.js":10,"./lib/transactions/crypto.js":11,"./lib/transactions/dapp.js":12,"./lib/transactions/delegate.js":13,"./lib/transactions/signature.js":14,"./lib/transactions/storage.js":15,"./lib/transactions/transaction.js":16,"./lib/transactions/transfer.js":17,"./lib/transactions/uia.js":18,"./lib/transactions/vote.js":19}],3:[function(require,module,exports){
+},{"./lib/constants":7,"./lib/options.js":8,"./lib/time/format.js":9,"./lib/time/slots.js":10,"./lib/transactions/crypto.js":11,"./lib/transactions/dapp.js":12,"./lib/transactions/delegate.js":13,"./lib/transactions/signature.js":14,"./lib/transactions/storage.js":15,"./lib/transactions/transaction.js":16,"./lib/transactions/transfer.js":17,"./lib/transactions/uia.js":18,"./lib/transactions/vote.js":19}],3:[function(require,module,exports){
 (function (Buffer){
 var sha256 = require('fast-sha256')
 var RIPEMD160 = require('ripemd160')
@@ -1241,7 +1242,12 @@ function createTransaction(asset, fee, type, recipientId, message, secret, secon
     senderPublicKey: keys.publicKey,
     timestamp: getClientFixedTime(),
     message: message,
-    asset: asset
+    asset: {
+      uiaTransfer: {
+        currency: asset.uiaTransfer.currency,
+        amount: String(asset.uiaTransfer.amount)
+      }
+		}
   }
 
   crypto.sign(transaction, keys)
@@ -1257,6 +1263,7 @@ function createTransaction(asset, fee, type, recipientId, message, secret, secon
 }
 
 module.exports = {
+  calculateFee: calculateFee,
   createIssuer: function (name, desc, secret, secondSecret) {
     var asset = {
       uiaIssuer: {
@@ -1340,7 +1347,6 @@ module.exports = {
     return createTransaction(asset, fee, 14, recipientId, message, secret, secondSecret)
   },
 }
-
 },{"../constants.js":7,"../options":8,"../time/slots.js":10,"./crypto.js":11,"bytebuffer":24}],19:[function(require,module,exports){
 var crypto = require("./crypto.js")
 var constants = require("../constants.js")
