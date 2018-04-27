@@ -227,10 +227,12 @@ module.exports = {
     secondsignature: 500000000,
     multisignature: 500000000,
     dapp: 10000000000,
-    lock: 100000000,
+    lock: 1000000000,
     percent: 0.001
   },
-  coin: 100000000
+  coin: {
+    
+  }
 }
 
 },{}],8:[function(require,module,exports){
@@ -1064,16 +1066,16 @@ var slots = require("../time/slots.js")
 var options = require('../options')
 
 function calculateFee(amount) {
-    var min = constants.fees.send;
-    var fee = parseFloat((amount * constants.fees.percent).toFixed(0));
-    return fee < min ? min : fee;
+	var min = constants.fees.send;
+	var fee = Number(parseFloat((amount * constants.fees.percent).toFixed(0)));
+	return fee < min ? min : fee;
 }
 
 function createTransaction(recipientId, amount, message, secret, secondSecret) {
 	var transaction = {
 		type: 0,
-		amount: amount,
-		fee: constants.fees.send,
+		amount: Number(amount),
+		fee: calculateFee(amount),
 		recipientId: recipientId,
 		message: message,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
@@ -1100,7 +1102,7 @@ function createLock(height, secret, secondSecret) {
 		amount: 0,
 		fee: constants.fees.lock,
 		recipientId: null,
-		args: [ String(height) ],
+		args: [String(height)],
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {}
 	};
