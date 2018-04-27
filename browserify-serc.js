@@ -489,7 +489,7 @@ function getInTransferBytes(inTransfer) {
 		var dappId = new Buffer(inTransfer.dappId, "utf8");
 		var currency = new Buffer(inTransfer.currency, "utf8")
 		buf = Buffer.concat([buf, dappId, currency]);
-		if (inTransfer.currency !== 'XAS') {
+		if (inTransfer.currency !== 'SERC') {
 			var amount = new Buffer(inTransfer.amount, "utf8")
 			buf = Buffer.concat([buf, amount])
 		}
@@ -1148,7 +1148,7 @@ function createInTransfer(dappId, currency, amount, secret, secondSecret) {
 		}
 	};
 
-	if (currency === 'XAS') {
+	if (currency === 'SERC') {
 		transaction.amount = Number(amount)
 	} else {
 		transaction.asset.inTransfer.amount = String(amount)
