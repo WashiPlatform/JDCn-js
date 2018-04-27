@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha test",
-    "build": "browserify build.js -o browserify-serc.js && uglifyjs browserify-serc.js > browserify-serc-min.js"
+    "build": "browserify build.js -o browserify-serc.js && uglifyjs browserify-serc.js > browserify-serc.min.js"
   },
   "keywords": [
     "serc",
