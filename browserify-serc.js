@@ -220,19 +220,22 @@ module.exports = {
 }).call(this,require("buffer").Buffer)
 },{"./bs58.js":5,"buffer":23,"fast-sha256":28}],7:[function(require,module,exports){
 module.exports = {
-  fees:{
+  fees: {
     send: 100000000,  // 转账矿工费用基数
     vote: 100000000,  // 投票费用
-    delegate: 10000000000,  
+    delegate: 10000000000,
     secondsignature: 500000000,
     multisignature: 500000000,
     dapp: 10000000000,
     lock: 1000000000,
-    percent: 0.001
+    percent: 0.001,
+    issuer: 1000000000000,  // 注册发行商
+    issue: 1000000000000,  // 注册资产
+    flag: 100000000, // 
+    acl: 200000000, // 创建 ACL
+    asset: 1000000000000, // 创建次产
   },
-  coin: {
-    
-  }
+  coin: 100000000
 }
 
 },{}],8:[function(require,module,exports){
@@ -1221,6 +1224,12 @@ function getClientFixedTime() {
   return slots.getTime() - options.get('clientDriftSeconds')
 }
 
+function calculateFee(amount) {
+  var min = constants.fees.send;
+  var fee = Number(parseFloat((amount * constants.fees.percent).toFixed(0)));
+  return fee < min ? min : fee;
+}
+
 function createTransaction(asset, fee, type, recipientId, message, secret, secondSecret) {
   var keys = crypto.getKeys(secret)
 
@@ -1256,7 +1265,8 @@ module.exports = {
       }
     }
     //var fee = (100 + (Math.floor(bytes.length / 200) + 1) * 0.1) * constants.coin
-    var fee = 100 * constants.coin
+    // var fee = 100 * constants.coin
+    var fee = constants.fees.issuer;
     return createTransaction(asset, fee, 9, null, null, secret, secondSecret)
   },
 
@@ -1274,7 +1284,8 @@ module.exports = {
       }
     }
     // var fee = (500 + (Math.floor(bytes.length / 200) + 1) * 0.1) * constants.coin
-    var fee = 500 * constants.coin
+    // var fee = 500 * constants.coin
+    var fee = constants.fees.asset;
     return createTransaction(asset, fee, 10, null, null, secret, secondSecret)
   },
 
@@ -1286,7 +1297,8 @@ module.exports = {
         flag: flag
       }
     }
-    var fee = 0.1 * constants.coin
+    // var fee = 0.1 * constants.coin
+    var fee = constants.fees.flag;
     return createTransaction(asset, fee, 11, null, null, secret, secondSecret)
   },
 
@@ -1299,7 +1311,8 @@ module.exports = {
         list: list
       }
     }
-    var fee = 0.2 * constants.coin
+    // var fee = 0.2 * constants.coin
+    var fee = constants.fees.acl;
     return createTransaction(asset, fee, 12, null, null, secret, secondSecret)
   },
 
@@ -1310,7 +1323,8 @@ module.exports = {
         amount: amount
       }
     }
-    var fee = 0.1 * constants.coin
+    // var fee = 0.1 * constants.coin
+    var fee = constants.fees.issue;
     return createTransaction(asset, fee, 13, null, null, secret, secondSecret)
   },
 
@@ -1321,7 +1335,8 @@ module.exports = {
         amount: amount
       }
     }
-    var fee = 0.1 * constants.coin
+    // var fee = 0.1 * constants.coin
+    var fee = calculateFee(amount);
     return createTransaction(asset, fee, 14, recipientId, message, secret, secondSecret)
   },
 }
