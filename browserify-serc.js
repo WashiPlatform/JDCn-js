@@ -1283,7 +1283,7 @@ module.exports = {
     //var fee = (100 + (Math.floor(bytes.length / 200) + 1) * 0.1) * constants.coin
     // var fee = 100 * constants.coin
     var fee = constants.fees.issuer;
-    return createTransaction(asset, fee, 9, null, null, secret, secondSecret)
+    return createTransaction(asset, fee, 9, '', '', secret, secondSecret)
   },
 
   createAsset: function (name, desc, maximum, precision, price, strategy, allowWriteoff, allowWhitelist, allowBlacklist, secret, secondSecret) {
@@ -1304,7 +1304,7 @@ module.exports = {
     // var fee = (500 + (Math.floor(bytes.length / 200) + 1) * 0.1) * constants.coin
     // var fee = 500 * constants.coin
     var fee = constants.fees.asset;
-    return createTransaction(asset, fee, 10, null, null, secret, secondSecret)
+    return createTransaction(asset, fee, 10, '', '', secret, secondSecret)
   },
 
   createFlags: function (currency, flagType, flag, secret, secondSecret) {
@@ -1317,7 +1317,7 @@ module.exports = {
     }
     // var fee = 0.1 * constants.coin
     var fee = constants.fees.flag;
-    return createTransaction(asset, fee, 11, null, null, secret, secondSecret)
+    return createTransaction(asset, fee, 11, '', '', secret, secondSecret)
   },
 
   createAcl: function (currency, operator, flag, list, secret, secondSecret) {
@@ -1331,7 +1331,7 @@ module.exports = {
     }
     // var fee = 0.2 * constants.coin
     var fee = constants.fees.acl;
-    return createTransaction(asset, fee, 12, null, null, secret, secondSecret)
+    return createTransaction(asset, fee, 12, '', '', secret, secondSecret)
   },
 
   createIssue: function (currency, amount, secret, secondSecret) {
@@ -1343,7 +1343,7 @@ module.exports = {
     }
     // var fee = 0.1 * constants.coin
     var fee = constants.fees.issue;
-    return createTransaction(asset, fee, 13, null, null, secret, secondSecret)
+    return createTransaction(asset, fee, 13, '', '', secret, secondSecret)
   },
 
   createTransfer: function (currency, amount, recipientId, message, secret, secondSecret) {
