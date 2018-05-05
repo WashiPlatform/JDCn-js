@@ -868,7 +868,7 @@ function createDApp(options, secret, secondSecret) {
 		type: 5,
 		amount: 0,
 		fee: constants.fees.dapp,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - globalOptions.get('clientDriftSeconds'),
 		asset: {
@@ -1005,7 +1005,7 @@ function createSignature(secret, secondSecret) {
 		type: 1,
 		amount: 0,
 		fee: constants.fees.secondsignature,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {
@@ -1047,7 +1047,7 @@ function createStorage(content, secret, secondSecret) {
 		type: 8,
 		amount: 0,
 		fee: fee,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {
@@ -1115,7 +1115,7 @@ function createLock(height, secret, secondSecret) {
 		type: 100,
 		amount: 0,
 		fee: constants.fees.lock,
-		recipientId: null,
+		recipientId: '',
 		args: [String(height)],
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {}
@@ -1153,7 +1153,7 @@ function createInTransfer(dappId, currency, amount, secret, secondSecret) {
 		type: 6,
 		amount: 0,
 		fee: constants.fees.send,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {
@@ -1373,7 +1373,7 @@ function createVote(keyList, secret, secondSecret) {
 		type: 3,
 		amount: 0,
 		fee: constants.fees.vote,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {
