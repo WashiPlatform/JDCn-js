@@ -955,7 +955,7 @@ function createDelegate(username, secret, secondSecret) {
 		type: 2,
 		amount: 0,
 		fee: constants.fees.delegate,
-		recipientId: null,
+		recipientId: '',
 		senderPublicKey: keys.publicKey,
 		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
 		asset: {
@@ -978,7 +978,7 @@ function createDelegate(username, secret, secondSecret) {
 }
 
 module.exports = {
-	createDelegate : createDelegate
+	createDelegate: createDelegate
 }
 
 },{"../constants.js":7,"../options":8,"../time/slots.js":10,"./crypto.js":11}],14:[function(require,module,exports){
