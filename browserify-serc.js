@@ -20,52 +20,51 @@ module.exports = {
 }
 },{"./lib/constants":7,"./lib/options.js":8,"./lib/time/format.js":9,"./lib/time/slots.js":10,"./lib/transactions/crypto.js":11,"./lib/transactions/dapp.js":12,"./lib/transactions/delegate.js":13,"./lib/transactions/signature.js":14,"./lib/transactions/storage.js":15,"./lib/transactions/transaction.js":16,"./lib/transactions/transfer.js":17,"./lib/transactions/uia.js":18,"./lib/transactions/vote.js":19}],3:[function(require,module,exports){
 (function (Buffer){
-var sha256 = require('fast-sha256')
-var RIPEMD160 = require('ripemd160')
-var base58check = require('./base58check')
+var sha256 = require('fast-sha256');
+var RIPEMD160 = require('ripemd160');
+var base58check = require('./base58check');
+var constants = require('./constants');
 
-const NORMAL_PREFIX = 'A' // A
+// const NORMAL_PREFIX = 'A'; // A
 
 module.exports = {
   isAddress: function (address) {
     if (typeof address !== 'string') {
       return false
     }
-    // if (!/^[0-9]{1,20}$/g.test(address)) {
-    if (!base58check.decodeUnsafe(address.slice(1))) {
+    // ['A'].indexOf(address[0]) == -1
+    if (address.indexOf(constants.address.prefix) !== 0) {
       return false
     }
-    if (['A'].indexOf(address[0]) == -1) {
-      return false
-    }
-    // }
-    return true
+
+    return base58check.decodeUnsafe(address.slice(constants.address.prefix.length));
   },
 
   isBase58CheckAddress: function (address) {
     if (typeof address !== 'string') {
       return false
     }
-    if (!base58check.decodeUnsafe(address.slice(1))) {
+
+    if (address.indexOf(constants.address.prefix) != 0) { // ['A'].indexOf(address[0])
       return false
     }
-    if (['A'].indexOf(address[0]) == -1) {
-      return false
-    }
-    return true
+
+    return base58check.decodeUnsafe(address.slice(constants.address.prefix.length))
   },
 
   generateBase58CheckAddress: function (publicKey) {
     if (typeof publicKey === 'string') {
       publicKey = Buffer.from(publicKey, 'hex')
     }
-    var h1 = sha256.hash(publicKey)
-    var h2 = new RIPEMD160().update(Buffer.from(h1)).digest()
-    return NORMAL_PREFIX + base58check.encode(h2)
+
+    var h1 = sha256.hash(publicKey);
+    var h2 = new RIPEMD160().update(Buffer.from(h1)).digest();
+    
+    return constants.address.prefix + base58check.encode(h2)
   },
 }
 }).call(this,require("buffer").Buffer)
-},{"./base58check":6,"buffer":23,"fast-sha256":28,"ripemd160":49}],4:[function(require,module,exports){
+},{"./base58check":6,"./constants":7,"buffer":23,"fast-sha256":28,"ripemd160":49}],4:[function(require,module,exports){
 (function (Buffer){
 // base-x encoding
 // Forked from https://github.com/cryptocoinjs/bs58
@@ -236,7 +235,10 @@ module.exports = {
     acl: 1 * 100000000, // 创建 ACL
     asset: 100 * 100000000 // 创建资产
   },
-  coin: 100000000
+  coin: 100000000,
+  address: {
+    prefix: 'A'
+  }
 }
 
 },{}],8:[function(require,module,exports){
@@ -988,39 +990,39 @@ var slots = require("../time/slots.js")
 var options = require('../options')
 
 function newSignature(secondSecret) {
-	var keys = crypto.getKeys(secondSecret);
+  var keys = crypto.getKeys(secondSecret);
 
-	var signature = {
-		publicKey: keys.publicKey
-	};
+  var signature = {
+    publicKey: keys.publicKey
+  };
 
-	return signature;
+  return signature;
 }
 
 function createSignature(secret, secondSecret) {
-	var keys = crypto.getKeys(secret);
+  var keys = crypto.getKeys(secret);
 
-	var signature = newSignature(secondSecret);
-	var transaction = {
-		type: 1,
-		amount: 0,
-		fee: constants.fees.secondsignature,
-		recipientId: '',
-		senderPublicKey: keys.publicKey,
-		timestamp: slots.getTime() - options.get('clientDriftSeconds'),
-		asset: {
-			signature: signature
-		}
-	};
+  var signature = newSignature(secondSecret);
+  var transaction = {
+    type: 1,
+    amount: 0,
+    fee: constants.fees.secondsignature,
+    recipientId: '',
+    senderPublicKey: keys.publicKey,
+    timestamp: slots.getTime() - options.get('clientDriftSeconds'),
+    asset: {
+      signature: signature
+    }
+  };
 
-	crypto.sign(transaction, keys);
-	transaction.id = crypto.getId(transaction);
+  crypto.sign(transaction, keys);
+  transaction.id = crypto.getId(transaction);
 
-	return transaction;
+  return transaction;
 }
 
 module.exports = {
-	createSignature: createSignature
+  createSignature: createSignature
 }
 
 },{"../constants.js":7,"../options":8,"../time/slots.js":10,"./crypto.js":11}],15:[function(require,module,exports){
